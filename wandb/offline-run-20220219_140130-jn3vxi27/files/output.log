@@ -1,0 +1,18 @@
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 9/9 [00:25<00:00,  2.89s/it]
+100%|████████████████████████████████████████████████████████████████████████████| 9/9 [00:25<00:00,  2.82s/it, loss_rec=1.32, steps=10]
+100%|███████████████████████████████████████████████████████████████████████████| 9/9 [00:26<00:00,  2.93s/it, loss_rec=0.886, steps=20]
+100%|███████████████████████████████████████████████████████████████████████████| 9/9 [00:26<00:00,  2.93s/it, loss_rec=0.734, steps=30]
+100%|███████████████████████████████████████████████████████████████████████████| 9/9 [00:26<00:00,  2.97s/it, loss_rec=0.807, steps=40]
+ 67%|██████████████████████████████████████████████████                         | 6/9 [00:21<00:10,  3.59s/it, loss_rec=0.771, steps=50]
+Traceback (most recent call last):
+  File "C:\Users\Tarun Kumar Gola\Documents\WireLess_Communication\AGAIN-VC-main\AGAIN-VC-main\train.py", line 49, in <module>
+    trainer.train(total_steps=args.total_steps,
+  File "C:\Users\Tarun Kumar Gola\Documents\WireLess_Communication\AGAIN-VC-main\AGAIN-VC-main\agent\trainer.py", line 40, in train
+    meta = self.step_fn(self.model_state, data)
+  File "C:\Users\Tarun Kumar Gola\Documents\WireLess_Communication\AGAIN-VC-main\AGAIN-VC-main\model\again.py", line 64, in train_step
+    loss.backward()
+  File "C:\Users\Tarun Kumar Gola\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\_tensor.py", line 307, in backward
+    torch.autograd.backward(self, gradient, retain_graph, create_graph, inputs=inputs)
+  File "C:\Users\Tarun Kumar Gola\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\autograd\__init__.py", line 154, in backward
+    Variable._execution_engine.run_backward(
+KeyboardInterrupt

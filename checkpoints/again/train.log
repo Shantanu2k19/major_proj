@@ -1,0 +1,8 @@
+Start to generate metadata(train) using ./data/indexes/vctk/indexes.pkl
+Start to generate metadata(dev) using ./data/indexes/vctk/indexes.pkl
+Failed checking if running in CYGWIN due to: FileNotFoundError(2, 'The system cannot find the file specified', None, 2, None)
+git repository is invalid
+Start to generate metadata(train) using ./data/indexes/hindi/indexes.pkl
+Start to generate metadata(dev) using ./data/indexes/hindi/indexes.pkl
+Failed checking if running in CYGWIN due to: FileNotFoundError(2, 'The system cannot find the file specified', None, 2, None)
+git repository is invalid
