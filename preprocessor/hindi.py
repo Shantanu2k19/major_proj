@@ -13,6 +13,7 @@ class Preprocessor(BasePreproceccor):
         basename_list = []
         # for speaker_dir in speaker_dir_list:
         lst = glob(os.path.join(input_path, '*.wav'))
+        lst = lst[:10000] #changed
         basename_list += [os.path.basename(f) for f in lst]
         file_list += lst
         file_dict = dict(zip(file_list, basename_list))

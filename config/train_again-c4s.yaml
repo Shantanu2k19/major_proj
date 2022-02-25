@@ -6,10 +6,10 @@ flag: c4s
 
 dataset:
   dataset_name: "hindi"
-  feat_path: data/features/hindi
+  feat_path: /content/drive/MyDrive/Hindi Audio/Gramvaani_Train_100/hindi
   feat:
     - "mel"
-  indexes_path: ./data/indexes/hindi/indexes.pkl
+  indexes_path: /content/drive/MyDrive/Hindi Audio/Gramvaani_Train_100/hindi/indexes.pkl
   seglen: 128
 
 dataloader:
