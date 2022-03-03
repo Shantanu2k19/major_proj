@@ -1,9 +1,9 @@
 _name: "Make indexes Config (default)"
 
-input_path: "./data/features/hindi/mel"
-output_path: "./data/indexes/hindi"
+input_path: "/content/drive/MyDrive/Hindi Audio/Kishore/features/mel"
+output_path: "/content/drive/MyDrive/Hindi Audio/Kishore/features"
 
-indexer_name: hindi
+indexer_name: kishore
 
 split_all:
   train: 80

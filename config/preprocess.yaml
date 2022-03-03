@@ -2,10 +2,10 @@
 
 _name: "Preprocess Config (default)"
 
-input_path: 'C:\Users\Tarun Kumar Gola\Desktop\Extra\Project Work\Gramvaani_Train_100\AudioWav'
-output_path: "./data/features/hindi"
+input_path: "/content/drive/MyDrive/demucs_separated/mdx_extra/p2_removed_silence"
+output_path: "/content/drive/MyDrive/Hindi Audio/Kishore/features"
 
-preprocessor_name: hindi
+preprocessor_name: kishore
 
 # Each element in 'feat_to_preprocess' should be defined in the 'feat' session.
 feat_to_preprocess:
