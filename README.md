@@ -1,3 +1,37 @@
+# steps to run this repo's code
+```
+!git clone "https://github.com/Shantanu2k19/major_proj"
+import os
+os.chdir("major_proj")
+```
+
+
+```
+!pip install wandb pyworld
+```
+
+Now connect Your <b>DTU Google Drive</b>
+```
+from google.colab import drive
+drive.mount('/content/drive')
+```
+
+<b>How To Fine Tune This Model</b><br>
+First run this command
+
+```
+!python train.py -c config/train_again-c4s.yaml --total-steps 10
+```
+
+Now copy the pretrained model from drive to collab's storage using this command
+```
+! cp "/content/drive/MyDrive/checkpoints/again-c4s_100000.pth" "/content/major_proj/checkpoints/again/c4s"
+```
+
+Finally run the train command
+```
+!python train.py -c config/train_again-c4s.yaml --total-steps 20000 --load "/content/major_proj/checkpoints/again/c4s/again-c4s_100000.pth"
+```
 # AGAIN-VC
 This is the official implementation of the paper [**AGAIN-VC: A One-shot Voice Conversion using Activation Guidance and Adaptive Instance Normalization**](https://arxiv.org/abs/2011.00316).
 AGAIN-VC is an auto-encoder-based model, comprising of a single encoder and a decoder. With a proper activation as an information bottleneck on content embeddings, the trade-off between the synthesis quality and thespeaker similarity of the converted speech is improved drastically. 
