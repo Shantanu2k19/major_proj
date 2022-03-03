@@ -33,6 +33,7 @@ class Trainer(BaseAgent):
     #  train
     # ====================================================
     def train(self, total_steps, verbose_steps, log_steps, save_steps, eval_steps):
+        self.model_state['steps'] = 0
         while self.model_state['steps'] <= total_steps:
             train_bar = tqdm(self.train_loader)
             for data in train_bar:
