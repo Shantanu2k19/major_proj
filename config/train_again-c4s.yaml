@@ -5,11 +5,11 @@ ckpt_dir: checkpoints/again
 flag: c4s
 
 dataset:
-  dataset_name: "kishore"
-  feat_path: "/content/drive/MyDrive/Hindi Audio/Kishore/features"
+  dataset_name: "hindi"
+  feat_path: "/content/drive/MyDrive/Hindi Audio/common_voice/features"
   feat:
     - "mel"
-  indexes_path: "/content/drive/MyDrive/Hindi Audio/Kishore/features/indexes.pkl"
+  indexes_path: "/content/drive/MyDrive/Hindi Audio/common_voice/features/indexes.pkl"
   seglen: 128
 
 dataloader:

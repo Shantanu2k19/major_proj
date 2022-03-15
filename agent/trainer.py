@@ -37,36 +37,33 @@ class Trainer(BaseAgent):
         while self.model_state['steps'] <= total_steps:
             train_bar = tqdm(self.train_loader)
             for data in train_bar:
-                self.model_state['steps'] += 1
                 meta = self.step_fn(self.model_state, data)
+                meta['log']['steps'] = self.model_state['steps']
+                train_bar.set_postfix(meta['log'])
+            self.model_state['steps'] += 1
+            if self.model_state['steps'] % log_steps == 0:
+                if self.writer is None:
+                    print('* self.writer is not implemented.')
+                else:
+                    self.writer.log(meta['log'], step=self.model_state['steps'])
+                    mels = meta['mels']
+                    _data = {}
+                    for k, v in mels.items():
+                        if v.shape[1] != 80:
+                            v = torch.nn.functional.interpolate(v.transpose(1,2), 80).transpose(1,2)
+                        _data[k] = (v.cpu().numpy()/5+1, self.mel2wav(v))
+                    self.writer.mels_summary(
+                        tag='train/seen',
+                        data=_data,
+                        sample_rate=22050,
+                        step=self.model_state['steps']
+                    )
 
-                if self.model_state['steps'] % log_steps == 0:
-                    if self.writer is None:
-                        print('* self.writer is not implemented.')
-                    else:
-                        self.writer.log(meta['log'], step=self.model_state['steps'])
-                        mels = meta['mels']
-                        _data = {}
-                        for k, v in mels.items():
-                            if v.shape[1] != 80:
-                                v = torch.nn.functional.interpolate(v.transpose(1,2), 80).transpose(1,2)
-                            _data[k] = (v.cpu().numpy()/5+1, self.mel2wav(v))
-                        self.writer.mels_summary(
-                            tag='train/seen',
-                            data=_data,
-                            sample_rate=22050,
-                            step=self.model_state['steps']
-                        )
-                        
-                if self.model_state['steps'] % verbose_steps == 0:
-                    meta['log']['steps'] = self.model_state['steps']
-                    train_bar.set_postfix(meta['log'])
-
-                if self.model_state['steps'] % save_steps == 0:
-                    self.save_model(self.model_state, \
-                        os.path.join(self.ckpt_dir_flag, f'steps_{self.model_state["steps"]}.pth'))
-                if self.model_state['steps'] % eval_steps == 0 and self.model_state['steps'] != 0:
-                    self.evaluate()
+            if self.model_state['steps'] % save_steps == 0:
+                self.save_model(self.model_state, \
+                    os.path.join(self.ckpt_dir_flag, f'steps_{self.model_state["steps"]}.pth'))
+            if self.model_state['steps'] % eval_steps == 0 and self.model_state['steps'] != 0:
+                self.evaluate()
 
     # ====================================================
     #  evaluate

@@ -27,12 +27,12 @@ def get_args():
 
     # 
     parser.add_argument('--load', '-l', type=str, help='Load a checkpoint.', default='')
-    parser.add_argument('--njobs', '-p', type=int, help='', default=4)
-    parser.add_argument('--total-steps', type=int, help='Total training steps.', default=100000)
-    parser.add_argument('--verbose-steps', type=int, help='The steps to update tqdm message.', default=10)
-    parser.add_argument('--log-steps', type=int, help='The steps to log data for the customed logger (wandb, tensorboard, etc.).', default=500)
-    parser.add_argument('--save-steps', type=int, help='The steps to save a checkpoint.', default=5000)
-    parser.add_argument('--eval-steps', type=int, help='The steps to evaluate.', default=5000)
+    parser.add_argument('--njobs', '-p', type=int, help='', default=10)
+    parser.add_argument('--total-steps', type=int, help='Total training steps.', default=600)
+    parser.add_argument('--verbose-steps', type=int, help='The steps to update tqdm message.', default=1)
+    parser.add_argument('--log-steps', type=int, help='The steps to log data for the customed logger (wandb, tensorboard, etc.).', default=1)
+    parser.add_argument('--save-steps', type=int, help='The steps to save a checkpoint.', default=5)
+    parser.add_argument('--eval-steps', type=int, help='The steps to evaluate.', default=5)
 
     return parser.parse_args()
 
