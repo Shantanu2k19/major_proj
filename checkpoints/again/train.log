@@ -6,3 +6,7 @@ Start to generate metadata(train) using ./data/indexes/hindi/indexes.pkl
 Start to generate metadata(dev) using ./data/indexes/hindi/indexes.pkl
 Failed checking if running in CYGWIN due to: FileNotFoundError(2, 'The system cannot find the file specified', None, 2, None)
 git repository is invalid
+Start to generate metadata(train) using /Users/sameer/Downloads/cv-corpus-8.0-2022-01-19/hi/features/indexes.pkl
+Start to generate metadata(dev) using /Users/sameer/Downloads/cv-corpus-8.0-2022-01-19/hi/features/indexes.pkl
+Popen(['git', 'rev-parse', '--show-toplevel'], cwd=/Users/sameer/major_proj, universal_newlines=False, shell=None, istream=None)
+Popen(['git', 'cat-file', '--batch-check'], cwd=/Users/sameer/major_proj, universal_newlines=False, shell=None, istream=<valid stream>)

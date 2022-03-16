@@ -66,9 +66,6 @@ class Config(DotDict):
     def __repr__(self):
         ret = f'[{self._name}]'
         ret += Config.trans(self)
-        #for k, v in self.items():
-        #    if k[0] != '_':
-        #        ret += f'\n    {k:16s}: {Config.trans(v, 2)}'
         return ret
 
 

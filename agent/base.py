@@ -1,5 +1,4 @@
 import os
-import logging
 import pickle as pk
 import importlib
 import torch
@@ -7,8 +6,6 @@ import torch
 from dataloader import get_dataset, get_dataloader
 from util.vocoder import get_vocoder
 from util.mytorch import save_checkpoint, load_checkpoint
-
-logger = logging.getLogger(__name__)
 
 class BaseAgent():
     def __init__(self, config, args):
@@ -35,10 +32,7 @@ class BaseAgent():
         os.makedirs(ckpt_dir_flag, exist_ok=True)
         with open(os.path.join(ckpt_dir_flag, 'dirtype'), 'w') as f:
             f.write('ckpt_dir_flag')
-        file_handler = logging.FileHandler(os.path.join(ckpt_dir, 'train.log'))
-        logging.getLogger().addHandler(file_handler)
         if os.path.exists(train_pkl):
-            logger.info(f'=> load train, dev data from {ckpt_dir}')
             train_data = pk.load(open(train_pkl, 'rb'))
             dev_data = pk.load(open(dev_pkl, 'rb'))
             train_set = get_dataset(dset='train', dataset_config=dataset_config, njobs=njobs, metadata=train_data)
@@ -60,8 +54,6 @@ class BaseAgent():
             with open(os.path.join(d, 'dirtype'), 'r') as f:
                 dirtype = f.read().strip()
             if dirtype == 'ckpt_dir':
-                logger.warn(f'The ckpt_path is {ckpt_path}, the flag is not specified.')
-                logger.warn(f'Use "default" flag.')
                 ckpt_dir = d
                 flag = 'default'
                 ckpt_dir_flag = os.path.join(ckpt_dir, flag)
@@ -77,9 +69,6 @@ class BaseAgent():
             ckpt_dir = os.path.dirname(ckpt_dir_flag)
             flag = os.path.basename(ckpt_dir_flag)
 
-        file_handler = logging.FileHandler(os.path.join(ckpt_dir, 'train.log'))
-        logging.getLogger().addHandler(file_handler)
-        logger.info(f'=> load train, dev data from {os.path.join(ckpt_dir)}')
         prefix = os.path.basename(os.path.dirname(dataset_config.indexes_path))
         train_data = pk.load(open(os.path.join(ckpt_dir, f'{prefix}_train.pkl'), 'rb'))
         dev_data = pk.load(open(os.path.join(ckpt_dir, f'{prefix}_dev.pkl'), 'rb'))

@@ -3,9 +3,6 @@ import os
 import numpy as np
 import random
 import shutil
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 def np2pt(array):

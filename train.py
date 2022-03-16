@@ -1,14 +1,8 @@
-import logging
 from agent.trainer import Trainer
 from util.parser import get_parser
 from util.config import Config
 from util.mytorch import same_seeds
 
-
-
-logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] %(asctime)s | %(filename)s | %(message)s',\
-     datefmt='%Y-%m-%d %H:%M:%S')
-logger = logging.getLogger(__name__)
 
 def get_args():
     parser = get_parser(description='Train')

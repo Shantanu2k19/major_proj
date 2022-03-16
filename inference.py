@@ -2,11 +2,6 @@ from util.parser import get_parser
 from util.config import Config
 from util.mytorch import same_seeds
 from agent.inferencer import Inferencer
-import logging
-
-logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(asctime)s | %(filename)s | %(message)s',\
-     datefmt='%Y-%m-%d %H:%M:%S')
-logger = logging.getLogger(__name__)
 
 def get_args():
     parser = get_parser(description='Inference')
@@ -41,13 +36,6 @@ if __name__ == '__main__':
     config = Config(args.config)
     same_seeds(args.seed)
     args.dsp_config = Config(args.dsp_config)
-
-    # log some info
-    logger.info(f'Config file:  {args.config}')
-    logger.info(f'Checkpoint:  {args.load}')
-    logger.info(f'Source path: {args.source}')
-    logger.info(f'Target path: {args.target}')
-    logger.info(f'Output path: {args.output}')
 
     # build inferencer
     inferencer = Inferencer(config=config, args=args)

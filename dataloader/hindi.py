@@ -1,11 +1,8 @@
 import os
-import logging
 import numpy as np
 import re
 from .base import BaseDataset
 from util.transform import segment, random_scale
-
-logger = logging.getLogger(__name__)
 
 class Dataset(BaseDataset):
     def __init__(self, dset, indexes_path, feat, feat_path, seglen, njobs, metadata):
@@ -21,7 +18,7 @@ class Dataset(BaseDataset):
             if os.path.isfile(path):
                 ret[f] = np.load(path)
             else:
-                logger.info(f'Skip {path} {f}: invalid file.')
+                print(f'Skip {path} {f}: invalid file.')
                 return
         ret['speaker'] = speaker
         return ret

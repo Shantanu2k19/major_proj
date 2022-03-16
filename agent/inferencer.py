@@ -1,6 +1,5 @@
 import os
 import torch
-import logging
 import numpy as np
 from glob import glob
 from tqdm import tqdm
@@ -8,8 +7,6 @@ from tqdm import tqdm
 from preprocessor.base import preprocess_one
 from .base import BaseAgent
 from util.dsp import Dsp
-
-logger = logging.getLogger(__name__)
 
 def gen_wav_list(path):
     if os.path.isdir(path):

@@ -2,7 +2,6 @@ import os
 import torch
 from tqdm import tqdm
 from .base import BaseAgent
-from util.mylogger import get_writer
 
 class Trainer(BaseAgent):
     def __init__(self, config, args):
@@ -22,9 +21,6 @@ class Trainer(BaseAgent):
                     dataloader_config=config.dataloader,
                     njobs=args.njobs)
             self.model_state, self.step_fn = self.build_model(config.build)
-        # use customed logger
-        # eg. wandb, tensorboard
-        self.writer = get_writer(config, args, self.ckpt_dir_flag)
 
     def build_model(self, build_config):
         return super().build_model(build_config, mode='train', device=self.device)
@@ -41,23 +37,6 @@ class Trainer(BaseAgent):
                 meta['log']['steps'] = self.model_state['steps']
                 train_bar.set_postfix(meta['log'])
             self.model_state['steps'] += 1
-            if self.model_state['steps'] % log_steps == 0:
-                if self.writer is None:
-                    print('* self.writer is not implemented.')
-                else:
-                    self.writer.log(meta['log'], step=self.model_state['steps'])
-                    mels = meta['mels']
-                    _data = {}
-                    for k, v in mels.items():
-                        if v.shape[1] != 80:
-                            v = torch.nn.functional.interpolate(v.transpose(1,2), 80).transpose(1,2)
-                        _data[k] = (v.cpu().numpy()/5+1, self.mel2wav(v))
-                    self.writer.mels_summary(
-                        tag='train/seen',
-                        data=_data,
-                        sample_rate=22050,
-                        step=self.model_state['steps']
-                    )
 
             if self.model_state['steps'] % save_steps == 0:
                 self.save_model(self.model_state, \
@@ -77,17 +56,4 @@ class Trainer(BaseAgent):
         with torch.no_grad():
 
             meta = self.step_fn(self.model_state, data, train=False)
-
             mels = meta['mels']
-
-            _data = {}
-            for k, v in mels.items():
-                if v.shape[1] != 80:
-                    v = torch.nn.functional.interpolate(v.transpose(1,2), 80).transpose(1,2)
-                _data[k] = (v.cpu().numpy()/5+1, self.mel2wav(v))
-            self.writer.mels_summary(
-                tag='dev/unseen',
-                data=_data,
-                sample_rate=22050,
-                step=self.model_state['steps']
-            )

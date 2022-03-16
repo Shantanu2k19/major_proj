@@ -1,12 +1,9 @@
 import pickle as pk
-import logging
 from functools import partial
 from multiprocessing.pool import ThreadPool
 from tqdm import tqdm
 from torch.utils.data import Dataset
 from util.transform import segment 
-
-logger = logging.getLogger(__name__)
 
 
 class BaseDataset(Dataset):
@@ -21,7 +18,6 @@ class BaseDataset(Dataset):
         self.speaker2data = BaseDataset.gen_speaker2data(self.data)
 
     def gen_metadata(self, dset, indexes_path, feat, feat_path, njobs):
-        logger.info(f'Start to generate metadata({dset}) using {indexes_path}')
         indexes = pk.load(open(indexes_path, 'rb'))
         sdata = indexes[dset]
         metadata = [(spk, d) for spk, data in sdata.items() for d in data]

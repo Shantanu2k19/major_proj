@@ -1,15 +1,10 @@
 import os
-import logging
 import numpy as np
 from tqdm import tqdm
 from functools import partial
 from multiprocessing.pool import ThreadPool
 
 from util.dsp import Dsp
-
-
-logger = logging.getLogger(__name__)
-
 
 def preprocess_one(input_items, module, output_path=''):
     input_path, basename = input_items

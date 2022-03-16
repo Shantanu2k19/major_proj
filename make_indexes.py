@@ -1,11 +1,7 @@
-import logging
 from indexer import get_indexer
 from util.parser import get_parser
 from util.config import Config
 
-
-logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(name)s - %(message)s')
-logger = logging.getLogger(__name__)
 
 def get_args():
     parser = get_parser(description='Make indexes.')

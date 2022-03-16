@@ -5,13 +5,10 @@ import matplotlib.pyplot as plt
 import librosa
 import librosa.display
 import soundfile as sf
-import logging
 
 from util.config import Config
 from util.vocoder import get_vocoder
 
-
-logger = logging.getLogger(__name__)
 
 
 class Dsp():
@@ -78,20 +75,6 @@ class Dsp():
         else:
             device = 'cpu'
         self.vocoder = get_vocoder(device=device)
-
-    def wav2s3prl_spec(self, wav):
-        if self.s3prl is None:
-            from s3prl import S3prl
-            self.s3prl = S3prl()
-        ret = self.s3prl.wav2spec(wav)
-        return ret
-
-    def wav2resemblyzer(self, wav):
-        if self.resemblyzer is None:
-            from resemblyzer import VoiceEncoder
-            self.resemblyzer = VoiceEncoder()
-        ret = self.resemblyzer.embed_utterance(wav)
-        return ret
 
     @staticmethod
     def plot_spectrogram(mag, save=''):
