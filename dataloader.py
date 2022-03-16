@@ -2,7 +2,7 @@ import pickle as pk
 from functools import partial
 from multiprocessing.pool import ThreadPool
 from tqdm import tqdm
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset,DataLoader
 from util.transform import segment 
 
 
@@ -42,13 +42,47 @@ class BaseDataset(Dataset):
     def drop_invalid_data(data, verbose=False):
         return data
 
-    def sub_process(self):
-        raise NotImplementedError
-
+    def sub_process(self, each_data, feat, feat_path):
+        speaker = each_data[0]
+        basename = each_data[1]
+        # print(each_data, feat, feat_path)
+        ret = {}
+        for f in feat:
+            path = os.path.join(feat_path, f, basename)
+            if os.path.isfile(path):
+                ret[f] = np.load(path)
+            else:
+                print(f'Skip {path} {f}: invalid file.')
+                return
+        ret['speaker'] = speaker
+        return ret
     
-    def __getitem__(self, index):
-        y = segment(self.data[index], seglen=self.seglen)
-        return y
+    # def __getitem__(self, index):
+    #     y = segment(self.data[index], seglen=self.seglen)
+    #     return y
 
+    def __getitem__(self, index):
+        speaker = self.data[index]['speaker']
+        mel = self.data[index]['mel']
+
+        mel = segment(mel, return_r=False, seglen=self.seglen)
+
+        meta = {
+            'mel': mel,
+        }
+        return meta
     def __len__(self):
         return len(self.data)
+
+def get_dataset(dset, dataset_config, njobs, metadata=None):
+    return BaseDataset(dset, 
+        dataset_config.indexes_path, 
+        dataset_config.feat,
+        dataset_config.feat_path,
+        dataset_config.seglen,
+        njobs,
+        metadata)
+
+def get_dataloader(dset, dataloader_config, dataset):
+    return DataLoader(dataset, **dataloader_config[dset])
+
