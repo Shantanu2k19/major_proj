@@ -1,3 +1,5 @@
+import os
+import numpy as np
 import pickle as pk
 from functools import partial
 from multiprocessing.pool import ThreadPool
