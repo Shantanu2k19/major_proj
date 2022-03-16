@@ -4,7 +4,8 @@ __pycache__/
 *.pkl
 # C extensions
 *.so
-
+*.pth
+*.DS_Store
 # Distribution / packaging
 bin/
 build/
@@ -16,6 +17,7 @@ lib64/
 parts/
 sdist/
 var/
+wandb/
 *.egg-info/
 .installed.cfg
 *.egg

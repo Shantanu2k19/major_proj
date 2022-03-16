@@ -1,7 +1,7 @@
 _name: "Make indexes Config (default)"
 
-input_path: "/content/drive/MyDrive/Hindi Audio/common_voice/features/mel"
-output_path: "/content/drive/MyDrive/Hindi Audio/common_voice/features"
+input_path: "/Users/sameer/Downloads/cv-corpus-8.0-2022-01-19/hi/features/mel"
+output_path: "/Users/sameer/Downloads/cv-corpus-8.0-2022-01-19/hi/features"
 
 indexer_name: hindi
 

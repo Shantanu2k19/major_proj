@@ -1,11 +1,11 @@
 import os
-import pickle as pk
-import importlib
+from pickle import load,dump
 import torch
 
 from dataloader import get_dataset, get_dataloader
 from util.vocoder import get_vocoder
 from util.mytorch import save_checkpoint, load_checkpoint
+from model import build_model
 
 class BaseAgent():
     def __init__(self, config, args):
@@ -15,9 +15,7 @@ class BaseAgent():
 
     @staticmethod
     def build_model(build_config, mode, device):
-        _build_model = importlib.import_module(f'model.{build_config.model_name}').build_model
-        model_state, step_fn = _build_model(build_config, device=device, mode=mode)
-        return model_state, step_fn
+        return build_model(build_config, device=device, mode=mode)
 
     @staticmethod
     def gen_data(ckpt_path, flag, dataset_config, dataloader_config, njobs):
@@ -33,15 +31,15 @@ class BaseAgent():
         with open(os.path.join(ckpt_dir_flag, 'dirtype'), 'w') as f:
             f.write('ckpt_dir_flag')
         if os.path.exists(train_pkl):
-            train_data = pk.load(open(train_pkl, 'rb'))
-            dev_data = pk.load(open(dev_pkl, 'rb'))
+            train_data = load(open(train_pkl, 'rb'))
+            dev_data = load(open(dev_pkl, 'rb'))
             train_set = get_dataset(dset='train', dataset_config=dataset_config, njobs=njobs, metadata=train_data)
             dev_set = get_dataset(dset='dev', dataset_config=dataset_config, njobs=njobs, metadata=dev_data)
         else:
             train_set = get_dataset(dset='train', dataset_config=dataset_config, njobs=njobs)
             dev_set = get_dataset(dset='dev', dataset_config=dataset_config, njobs=njobs)
-            pk.dump(train_set.data, open(train_pkl, 'wb'))
-            pk.dump(dev_set.data, open(dev_pkl, 'wb'))
+            dump(train_set.data, open(train_pkl, 'wb'))
+            dump(dev_set.data, open(dev_pkl, 'wb'))
         train_loader = get_dataloader(dset='train', dataloader_config=dataloader_config, dataset=train_set)
         dev_loader = get_dataloader(dset='dev', dataloader_config=dataloader_config, dataset=dev_set)
         
@@ -70,8 +68,8 @@ class BaseAgent():
             flag = os.path.basename(ckpt_dir_flag)
 
         prefix = os.path.basename(os.path.dirname(dataset_config.indexes_path))
-        train_data = pk.load(open(os.path.join(ckpt_dir, f'{prefix}_train.pkl'), 'rb'))
-        dev_data = pk.load(open(os.path.join(ckpt_dir, f'{prefix}_dev.pkl'), 'rb'))
+        train_data = load(open(os.path.join(ckpt_dir, f'{prefix}_train.pkl'), 'rb'))
+        dev_data = load(open(os.path.join(ckpt_dir, f'{prefix}_dev.pkl'), 'rb'))
 
         train_set = get_dataset(dset='train', dataset_config=dataset_config, njobs=njobs, metadata=train_data)
         dev_set = get_dataset(dset='dev', dataset_config=dataset_config, njobs=njobs, metadata=dev_data)

@@ -66,26 +66,8 @@ def train_step(model_state, data, train=True):
             max_norm=grad_norm)
         optimizer.step()
 
-    with torch.no_grad():
-        model.eval()
-        m_src = x[0][None]
-        m_tgt = x[1][None]
-        c_src = x[0][None]
-        s_tgt = x[1][None]
-        s_src = x[0][None]
-
-        dec = model.inference(c_src, s_tgt)
-        rec = model.inference(c_src, s_src)
-
-
     meta['log'] = {
         'loss_rec': loss_rec.item(),
-    }
-    meta['mels'] = {
-        'src': m_src,
-        'tgt': m_tgt,
-        'dec': dec,
-        'rec': rec,
     }
 
     return meta

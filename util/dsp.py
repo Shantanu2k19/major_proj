@@ -33,10 +33,10 @@ class Dsp():
             'trim': 20,
         }
         if config is None:
-            logger.info('Dsp config is None, use default config.')
+            print('Dsp config is None, use default config.')
             config = default
         self.config = Config(config)
-        logger.info(self.config)
+        print(self.config)
         for k, v in default.items():
             if k not in self.config.keys():
                 self.config[k] = v
@@ -58,9 +58,9 @@ class Dsp():
 
     def wav2mel(self, y):
         D = np.abs(librosa.stft(y, n_fft=self.config.n_fft,
-            hop_length=self.config.hop_length, win_length=self.config.win_length)**2)
-        D = np.sqrt(D)
+            hop_length=self.config.hop_length, win_length=self.config.win_length))
         S = np.dot(self.mel_basis, D)
+        S[S == 0] = 1e-5
         log_S = np.log10(S)
         return log_S
 

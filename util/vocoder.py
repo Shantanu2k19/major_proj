@@ -3,7 +3,7 @@ import soundfile as sf
 
 class VocoderWrapper():
     def __init__(self, device):
-        self.device = device
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.vocoder = torch.hub.load('descriptinc/melgan-neurips', 'load_melgan')
         self.n_mels = 80
         self.sr = 22050
