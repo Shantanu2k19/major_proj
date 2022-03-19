@@ -6,10 +6,10 @@ flag: c4s
 
 dataset:
   dataset_name: "hindi"
-  feat_path: "/content/drive/MyDrive/Hindi Audio/common_voice/features"
+  feat_path: "/Users/sameer/Downloads/cv-corpus-8.0-2022-01-19/hi/features"
   feat:
     - "mel"
-  indexes_path: "/content/drive/MyDrive/Hindi Audio/common_voice/features/indexes.pkl"
+  indexes_path: "/Users/sameer/Downloads/cv-corpus-8.0-2022-01-19/hi/features/indexes.pkl"
   seglen: 128
 
 dataloader:

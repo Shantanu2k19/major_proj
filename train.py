@@ -4,7 +4,7 @@ from util.parser import get_parser
 from util.config import Config
 from util.mytorch import same_seeds
 from tqdm import tqdm
-from model import build_model
+from model import get_model
 from pickle import load,dump
 from dataloader import get_dataset, get_dataloader
 from util.vocoder import get_vocoder
@@ -29,11 +29,11 @@ class Trainer():
                     dataset_config=config.dataset, 
                     dataloader_config=config.dataloader,
                     njobs=args.njobs)
-            self.model_state, self.step_fn = self.build_model(config.build)
+            self.model_state, self.step_fn = get_model(config.build,mode='train',device =self.device)
 
     @staticmethod
-    def build_model(build_config, mode, device):
-        return build_model(build_config, device=device, mode=mode)
+    def build_model(self, build_config):
+        return build_model(build_config, mode='train', device=self.device)
 
     @staticmethod
     def gen_data(ckpt_path, flag, dataset_config, dataloader_config, njobs):
@@ -127,6 +127,8 @@ class Trainer():
                 print(f'{key} is not in state_dict.')
         return model_state
 
+
+    @staticmethod
     def build_model(self, build_config):
         return build_model(build_config, mode='train', device=self.device)
 
@@ -137,16 +139,20 @@ class Trainer():
         self.model_state['steps'] = 0
         while self.model_state['steps'] <= total_steps:
             train_bar = tqdm(self.train_loader)
+            loss_tot,it = 0,1;
             for data in train_bar:
                 meta = self.step_fn(self.model_state, data)
+                loss_tot += meta['log']['loss_rec']
+                meta['log']['loss_rec'] = loss_tot/it;
                 meta['log']['steps'] = self.model_state['steps']
                 train_bar.set_postfix(meta['log'])
+                it+=1
             self.model_state['steps'] += 1
             if self.model_state['steps'] % save_steps == 0:
                 self.save_model(self.model_state, \
                     os.path.join(self.ckpt_dir_flag, f'steps_{self.model_state["steps"]}.pth'))
-            if self.model_state['steps'] % eval_steps == 0 and self.model_state['steps'] != 0:
-                self.evaluate()
+            # if self.model_state['steps'] % eval_steps == 0 and self.model_state['steps'] != 0:
+            #     self.evaluate()
 
     # ====================================================
     #  evaluate

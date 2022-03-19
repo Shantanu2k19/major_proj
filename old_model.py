@@ -4,9 +4,7 @@ import torch.nn.functional as F
 from util.mytorch import np2pt
 
 def get_model(build_config, device, mode):
-    # model = Model(**build_config.model.params).to(device)
-    model = model1().to(device)
-    # print(model)
+    model = Model(**build_config.model.params).to(device)
     if mode == 'train':
         # model_state, step_fn, save, load
         optimizer = torch.optim.Adam(model.parameters(), **build_config.optimizer.params)
@@ -74,8 +72,8 @@ def train_step(model_state, data, train=True):
 
     return meta
 
-# def count_parameters(model):
-#     return sum(p.numel() for p in model.parameters() if p.requires_grad)
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 # For inference
 def inference_step(model_state, data):
@@ -189,7 +187,6 @@ class EncConvBlock(nn.Module):
                 )
         self.subsample = subsample
     def forward(self, x):
-        # x=x.unsqueeze(0)
         y = self.seq(x)
         if self.subsample > 1:
             x = F.avg_pool1d(x, kernel_size=self.subsample)
@@ -224,13 +221,18 @@ class DecConvBlock(nn.Module):
 # ====================================
 #  Model
 # ====================================
-
 class Encoder(nn.Module):
     def __init__(
         self, c_in, c_out,
         n_conv_blocks, c_h, subsample
     ):
         super().__init__()
+        # self.conv2d_blocks = nn.ModuleList([
+        #     ConvNorm2d(1, 8),
+        #     ConvNorm2d(8, 8),
+        #     ConvNorm2d(8, 1),
+        #     nn.BatchNorm2d(1), nn.LeakyReLU(),
+        # ])
         # 1d Conv blocks
         self.inorm = InstanceNorm()
         self.conv1d_first = ConvNorm(c_in * 1, c_h)
@@ -260,153 +262,6 @@ class Encoder(nn.Module):
 
         return y, mns, sds
 
-
-class Encoder2(nn.Module):
-    def __init__(self):
-        super().__init__()
-
-        self.inorm = InstanceNorm()
-
-        self.l11 = nn.Conv2d(1, 64, 3, 1, 1)
-        self.l12 = nn.ReLU(inplace=True)
-        self.l13 = nn.MaxPool2d(2, 2)
-
-        self.l21 = nn.Conv2d(64, 128, 3, 1, 1)
-        self.l22 = nn.ReLU(inplace=True)
-        self.l23 = nn.MaxPool2d(2, 2)
-
-        self.l31 = nn.Conv2d(128, 256, 3, 1, 1)
-        self.l32 = nn.ReLU(inplace=True)
-
-        self.l41 = nn.Conv2d(256, 256, 3, 1, 1)
-        self.l42 = nn.ReLU(inplace=True)
-        self.l43 = nn.MaxPool2d(2, 2)
-
-        self.l51 = nn.Conv2d(256, 512, 3, 1, 1)
-        self.l52 = nn.ReLU(inplace=True)
-
-        self.l61 = nn.Conv2d(512, 512, 3, 1, 1)
-        self.l62 = nn.ReLU(inplace=True)
-        self.l63 = nn.MaxPool2d(2, 2)
-
-        self.embeddings = nn.Sequential(
-            nn.Linear(8, 1024),
-            nn.ReLU(inplace=True),
-            nn.Linear(1024, 1024),
-            nn.ReLU(inplace=True),
-            nn.Linear(1024, 128),
-            nn.ReLU(inplace=True)
-        )
-
-    def forward(self, x):
-        mns = []
-        sds = []
-        ll = [2]
-        def calc(y):
-            y, mn, sd = self.inorm(y, return_mean_std=True)
-            mns.append(mn)
-            sds.append(sd)
-            # print(y.shape,ll[0])
-            # ll[0]+=1
-
-        y = x
-        y = self.l11(y)
-        y = self.l12(y)
-        y = self.l13(y)
-        # print(y.shape,1)
-        y = self.l21(y)
-        y = self.l22(y)
-        y = self.l23(y)
-
-        calc(y)
-
-        y = self.l31(y)
-        y = self.l32(y)
-
-        calc(y)
-
-        y = self.l41(y)
-        y = self.l42(y)
-        y = self.l43(y)
-
-        calc(y)
-
-        y = self.l51(y)
-        y = self.l52(y)
-
-        calc(y)
-
-        y = self.l61(y)
-        y = self.l62(y)
-        y = self.l63(y)
-
-        calc(y)
-
-        y = self.embeddings(y)
-
-        # print(y.shape,'after embeddings')
-        
-        return y, mns, sds
-
-
-class Decoder2(nn.Module):
-    def __init__(
-        self, c_in=0, c_h=0, c_out=0, 
-        n_conv_blocks=6, upsample=1
-    ):
-        super().__init__()
-        self.embeddings = nn.Sequential(
-            nn.Linear(128,1024),
-            nn.ReLU(inplace=True),
-
-            nn.Linear(1024, 1024),
-            nn.ReLU(inplace=True),
-
-            nn.Linear(1024,8),
-            nn.ReLU(inplace=True),
-        )
-        self.l11 = nn.ConvTranspose2d(512, 512, kernel_size=4, stride=2, padding=1)
-        self.l12 = nn.ReLU(inplace=True)
-        self.l21 = nn.ConvTranspose2d(512, 256, kernel_size=3, stride=1, padding=1)
-        self.l22 = nn.ReLU(inplace=True)
-        self.l31 = nn.ConvTranspose2d(256, 256, kernel_size=4, stride=2, padding=1)
-        self.l32 = nn.ReLU(inplace=True)
-        self.l41 = nn.ConvTranspose2d(256, 128, kernel_size=3, stride=1, padding=1)
-        self.l42 = nn.ReLU(inplace=True)
-        self.l51 = nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1)
-        self.l52 = nn.ReLU(inplace=True)
-        self.l6 = nn.ConvTranspose2d(64, 1, kernel_size=4, stride=2, padding=1)
-        self.rnn = nn.GRU(128,128,num_layers = 2)
-    def forward(self,y,mns,sds):
-        # print("Now Decoding")
-        y = self.embeddings(y)
-        # print(y.shape,"after embeddings")
-        y = y*sds[-1] + mns[-1]
-        y = self.l11(y)
-        y = self.l12(y)
-        y = y*sds[-2] + mns[-2]
-        # print(y.shape)
-        y = self.l21(y)
-        y = self.l22(y)
-        
-        y = y*sds[-3] + mns[-3]
-        y = self.l31(y)
-        y = self.l32(y)
-        y = y*sds[-4] + mns[-4]
-        # print(y.shape)
-        y = self.l41(y)
-        y = self.l42(y)
-        y = y*sds[-5] + mns[-5]
-        # print(y.shape)
-        y = self.l51(y)
-        y = self.l52(y)
-        # print(y.shape)
-        y = self.l6(y)
-        # print(y.shape,"all convs finished")
-        y = y.squeeze(1)
-        y,_ = self.rnn(y)
-        # print(y.shape,"final output")
-        return y;
 
 class Decoder(nn.Module):
     def __init__(
@@ -439,7 +294,7 @@ class Decoder(nn.Module):
             y = block(y)
             y = self.inorm(y)
             y = y * sd + mn
-        print(y.shape,"after decoder conv blocks")
+
         y = torch.cat((mn, y), dim=2)
         y = y.transpose(1,2)
         y, _ = self.rnn(y)
@@ -491,33 +346,25 @@ class Model(nn.Module):
         self.encoder = Encoder(**encoder_params)
         self.decoder = Decoder(**decoder_params)
         self.act = Activation(**activation_params)
-        # self.lol = encoder_params
-
-    # def __repr__(self):
-    #     print("repr of Model class")
-    #     return f"{self.lol} "
 
     def forward(self, x, x_cond=None):
-        print(x.shape,"\n\n\n")
 
         len_x = x.size(2)
         
         if x_cond is None:
             x_cond = torch.cat((x[:,:,len_x//2:], x[:,:,:len_x//2]), axis=2)
-        print(x.shape,"++++\n\n\n",x_cond.shape)
 
         x, x_cond = x[:,None,:,:], x_cond[:,None,:,:]
+        
+        print(x.shape,x_cond.shape,"HHI\n\n\n")
 
-        print(x.shape,"+-------+++\n\n\n",x_cond.shape)
         enc, mns_enc, sds_enc = self.encoder(x) # , mask=x_mask)
         cond, mns_cond, sds_cond = self.encoder(x_cond) #, mask=cond_mask)
-        # // 32*4*128
-        print(enc.shape)
+
         enc = (self.act(enc), mns_enc, sds_enc)
         cond = (self.act(cond), mns_cond, sds_cond)
-        
+
         y = self.decoder(enc, cond)
-        print(y.shape,"after getting out of decoder")
         return y
 
     def inference(self, source, target):
@@ -554,17 +401,3 @@ class Model(nn.Module):
         dec = y[:,:,:original_source_len]
 
         return dec
-
-
-class model1(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.enc = Encoder2()
-        self.dec = Decoder2()
-        self.act = VariantSigmoid(0.1)
-    def forward(self,x):
-        x = x[:,None,:,:]
-        y,mns,sds = self.enc(x)
-        y = self.act(y)
-        y = self.dec(y,mns,sds)
-        return y;
