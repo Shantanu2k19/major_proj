@@ -7,7 +7,7 @@ from collections import defaultdict
 
 class Indexer():
     def __init__(self):
-        self.dir_path = "/content/drive/MyDrive/Hindi Audio/common_voice/"
+        self.dir_path = "/Users/sameer/Downloads/cv-corpus-8.0-2022-01-19/hi/"
 
     def make_indexes(self, input_path, output_path, split_all, split_train):
         print(f'Starting to make indexes from {input_path}.')

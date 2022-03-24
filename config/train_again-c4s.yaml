@@ -14,7 +14,7 @@ dataset:
 
 dataloader:
   train:
-    batch_size: 32
+    batch_size: 16
     shuffle: True
   dev:
     batch_size: 64

@@ -45,8 +45,8 @@ class Dsp():
         y, sr = librosa.load(path, sr=self.config.sample_rate)
         if type(self.config.trim) is int:
             y, _ = librosa.effects.trim(y, top_db=self.config.trim)
-        y = np.clip(y, -1.0, 1.0)
-        return y
+        # y = np.clip(y, -1.0, 1.0)
+        return librosa.util.normalize(y)
 
     def save_wav(self, y, path):
         sf.write(file=path, data=y, samplerate=self.config.sample_rate)

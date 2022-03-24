@@ -8,7 +8,7 @@ from util.config import Config
 from util.mytorch import same_seeds
 from preprocess import preprocess_one
 from util.dsp import Dsp
-from model import build_model
+from model import get_model
 from util.mytorch import load_checkpoint
 
 def gen_wav_list(path):
@@ -55,7 +55,7 @@ class Inferencer():
             else:
                 module = Dsp(args.dsp_config.feat[feat])
                 self.dsp_modules[feat] = module
-        self.model_state, self.step_fn = build_model(config.build, mode='inference', device=self.device)
+        self.model_state, self.step_fn = get_model(config.build, mode='inference', device=self.device)
         self.model_state = self.load_model(self.model_state, args.load)
 
     def load_model(self,model_state, load_path):
